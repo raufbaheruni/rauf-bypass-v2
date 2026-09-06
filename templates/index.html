@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAUF BAHERUNI - AI Bypass</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #007bff; }
+        h2 { color: #333; margin-bottom: 5px; }
+        p.subtitle { color: #777; margin-top: 0; margin-bottom: 20px; }
+        input[type="file"] { margin: 20px 0; }
+        button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        #result { margin-top: 20px; word-wrap: break-word; }
+        img.preview { max-width: 100%; border-radius: 5px; margin-top: 10px; }
+        .error-box { background: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; font-size: 12px; text-align: left; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/profile.jpg" alt="Rauf Baheruni" class="profile-img">
+        <h2>RAUF BAHERUNI</h2>
+        <p class="subtitle">AI Bypass Tool</p>
+        
+        <form id="uploadForm">
+            <input type="file" id="fileInput" name="file" accept="image/*" required>
+            <button type="submit">Process Image</button>
+        </form>
+        <div id="result">
+            <p id="status"></p>
+            <div id="errorBox" class="error-box" style="display:none;"></div>
+            <img id="preview" class="preview" src="" style="display:none;">
+            <br>
+            <a id="downloadLink" href="#" style="display:none;" download="BAHERUNI.jpg">⬇️ Download BAHERUNI.jpg</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const status = document.getElementById('status');
+            const preview = document.getElementById('preview');
+            const downloadLink = document.getElementById('downloadLink');
+            const errorBox = document.getElementById('errorBox');
+            
+            status.innerText = "⏳ Processing...";
+            preview.style.display = 'none';
+            downloadLink.style.display = 'none';
+            errorBox.style.display = 'none';
+
+            const fileInput = document.getElementById('fileInput');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/upload', { method: 'POST', body: formData });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+                
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                
+                status.innerText = "✅ Successfully Processed!";
+                preview.src = url;
+                preview.style.display = 'block';
+                downloadLink.href = url;
+                downloadLink.setAttribute('download', 'BAHERUNI.jpg');
+                downloadLink.style.display = 'inline-block';
+            } catch (error) {
+                status.innerText = "❌ Error processing image:";
+                errorBox.innerText = error.message;
+                errorBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
